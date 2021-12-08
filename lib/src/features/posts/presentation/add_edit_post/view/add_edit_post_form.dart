@@ -15,7 +15,6 @@ class AddEditPostForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.height;
     return BlocListener<AddEditPostCubit, AddEditPostState>(
         listener: (context, state) {
           if (state.status.isSubmissionFailure) {
@@ -33,18 +32,22 @@ class AddEditPostForm extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.all(generalPadding16),
-          child: Column(
+          child: Stack(
             children: [
-              SizedBox(height: size * 0.85, child: const _PostForm()),
-              Container(
+              const SizedBox(height: double.infinity, child: _PostForm()),
+              Positioned(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 0,
+                right: 0,
+                child: Container(
                   padding: const EdgeInsets.only(left: generalPadding8),
                   decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
-                  alignment: Alignment.center,
-                  height: size * 0.06,
-                  child: const AddToPost()),
+                  child: const AddToPost(),
+                ),
+              )
             ],
           ),
         ));
@@ -123,8 +126,8 @@ class _ContentTextFormField extends StatelessWidget {
           previous.content.value != current.content.value,
       builder: (context, state) {
         return TextFormField(
-          onChanged: (email) =>
-              context.read<AddEditPostCubit>().contentChanged(email),
+          onChanged: (content) =>
+              context.read<AddEditPostCubit>().contentChanged(content.trim()),
           maxLines: null,
           style: Theme.of(context).textTheme.headline6,
           decoration: InputDecoration(
