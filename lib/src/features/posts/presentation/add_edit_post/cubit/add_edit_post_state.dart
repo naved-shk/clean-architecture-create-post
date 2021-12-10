@@ -1,7 +1,14 @@
 part of 'add_edit_post_cubit.dart';
 
-class AddEditPostState extends Equatable {
-  const AddEditPostState(
+abstract class AddEditPostState extends Equatable {
+  const AddEditPostState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class AddEditPostStateFormState extends AddEditPostState {
+  const AddEditPostStateFormState(
       {this.content = const Content.pure(),
       this.image = const Image.pure(),
       this.status = FormzStatus.pure,
@@ -15,13 +22,13 @@ class AddEditPostState extends Equatable {
   @override
   List<Object> get props => [content, image, status];
 
-  AddEditPostState copyWith({
+  AddEditPostStateFormState copyWith({
     Content? content,
     Image? image,
     FormzStatus? status,
     String? errorMessage,
   }) {
-    return AddEditPostState(
+    return AddEditPostStateFormState(
       content: content ?? this.content,
       image: image ?? this.image,
       status: status ?? this.status,

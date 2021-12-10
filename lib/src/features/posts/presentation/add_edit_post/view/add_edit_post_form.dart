@@ -17,17 +17,19 @@ class AddEditPostForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AddEditPostCubit, AddEditPostState>(
         listener: (context, state) {
-          if (state.status.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                ),
-              );
-          } else if (state.status.isSubmissionSuccess) {
-            context.read<AddEditPostCubit>().initialValue();
-            Navigator.of(context).pop();
+          if (state is AddEditPostStateFormState) {
+            if (state.status.isSubmissionFailure) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(state.errorMessage!),
+                  ),
+                );
+            } else if (state.status.isSubmissionSuccess) {
+              context.read<AddEditPostCubit>().clearValue();
+              Navigator.of(context).pop();
+            }
           }
         },
         child: Padding(
@@ -101,10 +103,11 @@ class _PublishButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddEditPostCubit, AddEditPostState>(
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous != current && current is AddEditPostStateFormState,
       builder: (context, state) {
         return ElevatedButton(
-          onPressed: state.status.isValidated
+          onPressed: (state as AddEditPostStateFormState).status.isValidated
               ? () => context.read<AddEditPostCubit>().createPost()
               : null,
           child: const Text(publish),
@@ -123,7 +126,7 @@ class _ContentTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AddEditPostCubit, AddEditPostState>(
       buildWhen: (previous, current) =>
-          previous.content.value != current.content.value,
+          previous != current && current is AddEditPostStateFormState,
       builder: (context, state) {
         return TextFormField(
           onChanged: (content) =>
@@ -145,8 +148,10 @@ class _Image extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddEditPostCubit, AddEditPostState>(
+      buildWhen: (previous, current) =>
+          previous != current && current is AddEditPostStateFormState,
       builder: (context, state) {
-        return state.image.value != null
+        return (state as AddEditPostStateFormState).image.value != null
             ? Container(
                 margin: const EdgeInsets.only(bottom: 8.0),
                 child: Image.memory(state.image.value!))

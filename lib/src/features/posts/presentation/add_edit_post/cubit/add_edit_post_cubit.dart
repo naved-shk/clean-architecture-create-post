@@ -16,13 +16,14 @@ class AddEditPostCubit extends Cubit<AddEditPostState> {
   final UpdatePostUsecase updatePostUsecase;
   AddEditPostCubit(
       {required this.addPostUsecase, required this.updatePostUsecase})
-      : super(const AddEditPostState());
+      : super(const AddEditPostStateFormState());
 
-  void initialValue() {
-    emit(const AddEditPostState());
+  void clearValue() {
+    emit(const AddEditPostStateFormState());
   }
 
   void contentChanged(String value) {
+    final state = this.state as AddEditPostStateFormState;
     final content = Content.dirty(value);
     emit(state.copyWith(
       content: content,
@@ -31,7 +32,9 @@ class AddEditPostCubit extends Cubit<AddEditPostState> {
   }
 
   void imageChanged(Uint8List? value) {
+    final state = this.state as AddEditPostStateFormState;
     final image = Image.dirty(value);
+
     emit(state.copyWith(
       image: image,
       status: Formz.validate([state.content, image]),
@@ -39,6 +42,7 @@ class AddEditPostCubit extends Cubit<AddEditPostState> {
   }
 
   Future<void> createPost() async {
+    final state = this.state as AddEditPostStateFormState;
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
 

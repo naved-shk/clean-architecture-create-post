@@ -11,7 +11,7 @@ class PostsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PostsCubit>(
-      create: (context) => sl<PostsCubit>()..getPosts(),
+      create: (context) => sl<PostsCubit>(),
       child: Scaffold(
         floatingActionButton: BlocBuilder<PostsCubit, PostsState>(
           builder: (context, state) {

@@ -8,14 +8,21 @@ class PostListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<PostsCubit>().state;
-    switch (state.status) {
-      case ListStatus.failure:
-        return const Center(child: Text('Oops something went wrong!'));
-      case ListStatus.success:
-        return PostItemView(posts: state.posts);
-      default:
-        return const Center(child: CircularProgressIndicator());
-    }
+    return BlocBuilder<PostsCubit, PostsState>(
+      builder: (context, state) {
+        if (state is LoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is ErrorState) {
+          return const Center(
+            child: Text('Oops something went wrong!'),
+          );
+        } else if (state is LoadedState) {
+          return PostItemView(posts: state.posts);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
   }
 }

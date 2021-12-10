@@ -11,34 +11,33 @@ class PostsCubit extends Cubit<PostsState> {
   final GetPostsUsecase getPostsUsecase;
   final DeletePostUsecase deletePostUsecase;
   PostsCubit({required this.getPostsUsecase, required this.deletePostUsecase})
-      : super(const PostsState.loading());
+      : super(InitialState()) {
+    getPosts();
+  }
 
   Future<void> getPosts() async {
+    emit(LoadingState());
     final eitherResponse = await getPostsUsecase.call(NoParams());
 
     emit(eitherResponse.fold((failure) {
-      return const PostsState.failure();
+      return ErrorState();
     }, (success) {
       final posts = success;
-      return PostsState.success(posts);
+      return LoadedState(posts);
     }));
   }
 
-  Future<void> deletePosts(int id) async {
-    final deleteInProgress = state.posts.map((post) {
-      return post.id == id ? post.copyWith(isDeleting: true) : post;
-    }).toList();
-
-    emit(PostsState.success(deleteInProgress));
+  Future<void> deletePosts(int id, List<PostEntity> posts) async {
+    emit(DeleteInProgressState());
 
     final eitherResponse = await deletePostUsecase.call(id);
 
     emit(eitherResponse.fold((failure) {
-      return const PostsState.failure();
+      return ErrorState();
     }, (success) {
-      final deleteSuccess = List.of(state.posts)
+      final List<PostEntity> result = List.of(posts)
         ..removeWhere((element) => element.id == id);
-      return PostsState.success(deleteSuccess);
+      return LoadedState(result);
     }));
   }
 }

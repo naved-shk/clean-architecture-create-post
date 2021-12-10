@@ -1,23 +1,37 @@
 part of 'posts_cubit.dart';
 
-enum ListStatus { loading, success, failure }
+abstract class PostsState extends Equatable {
+  const PostsState();
 
-class PostsState extends Equatable {
-  const PostsState._({
-    this.status = ListStatus.loading,
-    this.posts = const <PostEntity>[],
-  });
+  @override
+  List<Object> get props => [];
+}
 
-  const PostsState.loading() : this._();
+class InitialState extends PostsState {
+  @override
+  List<Object> get props => [];
+}
 
-  const PostsState.success(List<PostEntity> posts)
-      : this._(status: ListStatus.success, posts: posts);
+class LoadingState extends PostsState {
+  @override
+  List<Object> get props => [];
+}
 
-  const PostsState.failure() : this._(status: ListStatus.failure);
+class LoadedState extends PostsState {
+  const LoadedState(this.posts);
 
-  final ListStatus status;
   final List<PostEntity> posts;
 
   @override
-  List<Object> get props => [status, posts];
+  List<Object> get props => [posts];
+}
+
+class DeleteInProgressState extends PostsState {
+  @override
+  List<Object> get props => [];
+}
+
+class ErrorState extends PostsState {
+  @override
+  List<Object> get props => [];
 }

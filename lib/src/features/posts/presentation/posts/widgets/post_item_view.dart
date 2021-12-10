@@ -21,7 +21,7 @@ class PostItemView extends StatelessWidget {
               return ItemTile(
                 post: posts[index],
                 onDeletePressed: (id) {
-                  context.read<PostsCubit>().deletePosts(int.parse(id));
+                  context.read<PostsCubit>().deletePosts(int.parse(id), posts);
                 },
               );
             });
